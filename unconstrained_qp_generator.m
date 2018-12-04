@@ -6,22 +6,42 @@ clear all;
     kr = 4; % derivative order
     frame = 100;    % number of frames
     num_st = 4; % number of constrained states
+    
+    % function check
+    if T>=10
+       warning('Segment duration cannot exceed 10 s!'); 
+    end
             
     % [states_start states_end]
-    segments0 = [0 0 0 0 4 3 0 0;
-                  4 3 0 0 11 0 0 0
-                  11 0 0 0 22 0 0 0
-                  ];
-            
-    num_seg = size(segments0,1);
-    dim = size(segments0,2)/(num_st*2);
-    ts = t0:T:T*num_seg;
+    pose_fixed = [0 0 0 0
+            4 3 0 0
+            25 0 0 0
+            36 0 0 0
+        ];
+    num_free_point = 3;        
+
+%     segments0 = [0 0 0 0 4 3 0 0
+%                   4 3 0 0 25 0 0 0
+%                   25 0 0 0 35 0 0 0
+%                   ];
+              
+    num_seg = size(pose_fixed,1)+num_free_point-1;
+    num_point = num_seg+1;
+
 
 %%  matrix initial
 
     % induced params
+    segments0 = zeros(num_seg,kr*2);
+    for is = 1:size(pose_fixed,1)-1
+       segments0(is,1:kr) = pose_fixed(is,:);
+       segments0(is,kr+1:2*kr) = pose_fixed(is+1,:);
+    end
+    
     N = 2*kr -1;
     path = zeros(frame*num_seg+1,4);
+    dim = 1;
+    ts = t0:T:T*num_seg;
 
     % Q
     Q0 = zeros(N+1,N+1);
@@ -88,22 +108,27 @@ clear all;
     path2 = zeros(frame*num_seg+1,2);
     
     % find d
-    df = [0 0 0 0 22 0 0 0]';
+    for ip = 1:size(pose_fixed,1)
+       df((ip-1)*kr +1:ip*kr,1) = pose_fixed(ip,:); 
+    end
+    
+%     transit_point = segments0(1:end-1,end-3:end);
+%     df = [segments0(1,1:num_st) segments0(end,end-3:end)]';
     
     % selection matrix C
     Ct = zeros(num_seg*2*kr,(num_seg+1)*kr);
-    Ct(1:4,1:4) = eye(4);
-    Ct(end-3:end,5:8) = eye(4);
-    
+    Ct(1:num_st,1:num_st) = eye(4);
+%     Ct(end-num_st+1:end,num_st+1:num_st*2) = eye(4);
+    Ct(end-num_st+1:end,13:16) = eye(4);
     Ct_0 = [eye(4);eye(4)];
-    Ct(5:end-4,9:end) = kron(eye(2),Ct_0);
-    
-%     Ct(13:16,5:8) =eye(4);
+%     Ct(5:end-4,9:end) = kron(eye(num_point-2),Ct_0);
+    Ct(kr+1:kr*5,kr+1:kr*3)=kron(eye(2),Ct_0); 
+    Ct(21:end-kr,17:end) = kron(eye(3),Ct_0);
     
     % find R
     R = Ct.'*inv(Ad2).'*Q2*inv(Ad2)*Ct;
-    R_pp = R(9:end,9:end);
-    R_fp = R(1:8,9:end);
+    R_pp = R(17:end,17:end);
+    R_fp = R(1:16,17:end);
 
 
     % solver
@@ -122,7 +147,7 @@ clear all;
             end
         end
     end
-    path2(frame*num_seg+1,:) = [t+T/frame segments1(1,end-num_st+1)];
+    path2(frame*num_seg+1,:) = [t+T/frame df(end-num_st+1,1)];
     
     %% plot tools
     
