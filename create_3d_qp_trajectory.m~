@@ -1,9 +1,0 @@
-function path = create_3d_qp_trajecotry(segments_3d,transit_pose_3d,params)
-
-path_x = unconstrained_qp_generator([segments_3d(1,1:4);segments_3d(end,1:4)],transit_pose_3d(:,1)',params);  % x
-path_y = unconstrained_qp_generator([segments_3d(1,1:4);segments_3d(end,1:4)],transit_pose_3d(:,1)',params);  % y
-path_z = unconstrained_qp_generator([segments_3d(1,1:4);segments_3d(end,1:4)],transit_pose_3d(:,1)',params);  % z
-
-path =[pat]
-
-end
