@@ -17,4 +17,12 @@ title('Orientation (m)');
 xlabel('t (s)');
 % legend('roll','pitch','yaw');
 
+subplot(3,2,[2,4,6]);
+title('Trajectory in 3d');
+xlabel('x (m)');
+ylabel('y (m)');
+zlabel('z (m)');
+plot3(path(:,2),path(:,3),path(:,4));
+grid on;
+
 end
