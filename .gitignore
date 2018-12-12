@@ -1,2 +1,5 @@
 # ignored files
 *.m~
+
+# ignored folders
+.idea/
