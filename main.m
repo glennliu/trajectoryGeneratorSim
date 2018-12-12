@@ -22,17 +22,36 @@ path = create_3d_qp_trajectory(segments_3d,transit_pose_3d,params);
 run_trajectory(segments_3d,transit_pose_3d,path);
 
 %%
-path_pub = rospublisher('/path','geometry_msgs/PoseStamped');
+pose_pub = rospublisher('/pose','geometry_msgs/PoseStamped');
+path_pub = rospublisher('/trajectory','nav_msgs/Path');
+
 pause(2);
+pose_count = size(path,1);
+pose_msg = rosmessage(pose_pub);
 path_msg = rosmessage(path_pub);
+
+for i=1:pose_count
+    path_array_msg(i) = rosmessage('geometry_msgs/PoseStamped');
+    path_array_msg(i).Pose.Position.X = path(i,2);
+    path_array_msg(i).Pose.Position.Y = path(i,3);
+    path_array_msg(i).Pose.Position.Z = path(i,4);    
+end
+
+path_msg.Header.FrameId = 'map';
+path_msg.Poses = path_array_msg;
+send(path_pub,path_msg);
+
 t = timer('StartDelay', 4, 'Period', 0.02, 'TasksToExecute', size(path,1), ...
 'ExecutionMode', 'fixedRate');
 t.TimerFcn = @pub_timer_callback;
 t.StartFcn = @init_timer_func;
 
 t.UserData.path = path;
+t.UserData.pose_msg = pose_msg;
 t.UserData.path_msg = path_msg;
+t.UserData.pose_pub = pose_pub;
 t.UserData.path_pub = path_pub;
+
 
 start(t);
 
@@ -41,4 +60,5 @@ function init_timer_func(obj,event)
     hdata.i = 1;
     obj.Userdata = hdata;
 end
+
 
