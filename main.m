@@ -1,6 +1,10 @@
+% Generate path with specific segments 
+% Plot created path on Rviz
+
+
 clear all;
 %% set paramters
-
+rosinit;
 segments_3d = [6 0 0 0 0 0 0 0 3.2 0 0 0
                -6.2 0 0 0 1.2 0 0 0 3.2 0 0 0 
                ];
@@ -60,5 +64,6 @@ function init_timer_func(obj,event)
     hdata.i = 1;
     obj.Userdata = hdata;
 end
+
 
 
