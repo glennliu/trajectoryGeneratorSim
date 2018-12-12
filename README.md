@@ -16,6 +16,7 @@ The matlab program will read marker position as a series of vias, and generate a
 ## Step 3: Play generated trajectory on Rviz
 ![step3](./imgs/path_playing.png)
 
-##Reference
+### Reference
 [1] D. Mellinger and V. Kumar. Minimum snap trajectory generation and control for quadrotors. In Proc. Int. Conf. on Robotics and Automation, 2011. 
+
 [2] C. Richter, A. Bry and N. Roy, Polynomial Trajectory Planning for Aggressive Quadrotor Flight in Dense Indoor Envrionments. In Proc. Int. Symposium of Robotics Research(ISRR 2013).
