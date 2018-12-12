@@ -1,3 +1,4 @@
 Get Start
 
-![haha](imgs/interactive_marker.png)
+![text](https://github.com/glennliu/trajectoryGeneratorSim/blob/master/imgs/interactive_marker.png)
+
